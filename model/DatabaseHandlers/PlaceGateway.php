@@ -17,7 +17,7 @@ class PlaceGateway implements Gateway{
 
     public function insert(Place $object)
     {
-        $stmt = $this->conn->prepare('INSERT INTO place VALUES (:internet,:coffee,:plugs,:openTime,:closeTime,:address)');
+        $stmt = $this->conn->prepare('INSERT INTO place VALUES (:internet,:coffee,:plugs,:openTime,:closeTime,:address,:idUser)');
 
         $stmt->bindValue(':internet',$object->getInternet());
         $stmt->bindValue(':coffee',$object->getCoffee());
@@ -25,6 +25,7 @@ class PlaceGateway implements Gateway{
         $stmt->bindValue(':openTime',$object->getOpenTime());
         $stmt->bindValue(':closeTime',$object->getCloseTime());
         $stmt->bindValue(':address',$object->getAddress());
+        $stmt->bindValue(':idUser',$object->getIdUser());
 
         $stmt->execute();
 
@@ -67,7 +68,7 @@ class PlaceGateway implements Gateway{
 
         $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-        $p = new Place($result['internet'],$result['coffee'],$result['plugs'],$result['openTime'],$result['closeTime'],$result['address']);
+        $p = new Place($result['internet'],$result['coffee'],$result['plugs'],$result['openTime'],$result['closeTime'],$result['address'],$result['idUser']);
 
         return $p;
     }

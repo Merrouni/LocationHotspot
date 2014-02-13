@@ -17,8 +17,9 @@ class Place
     private $address;
     private $latitude;
     private $longitude;
+    private $idUser;
 
-    public function __construct($internet, $coffee, $plugs, $openTime, $closeTime, $address)
+    public function __construct($internet, $coffee, $plugs, $openTime, $closeTime, $address, $idUser)
     {
         $this->internet = $internet;
         $this->coffee = $coffee;
@@ -26,6 +27,7 @@ class Place
         $this->openTime = $openTime;
         $this->closeTime = $closeTime;
         $this->address = $address;
+        $this->idUser = $idUser;
     }
 
     /**
@@ -42,6 +44,11 @@ class Place
     public function getCloseTime()
     {
         return $this->closeTime;
+    }
+
+    public function getIdUser()
+    {
+        return $this->idUser;
     }
 
     /**

@@ -6,12 +6,13 @@
  * Time: 16:48
  */
 
+define('HOST','localhost');
+define('PROVIDER','mysql');
+define('USERNAME','root');
+define('PASSWORD','root');
+define('DATABASE','location_hotspot');
+
 class Connection {
-    const HOST="localhost";
-    const PROVIDER="mysql";
-    const USERNAME="root";
-    const PASSWORD="root";
-    const DATABASE="location_hotspot";
 
     public function getConnection()
     {

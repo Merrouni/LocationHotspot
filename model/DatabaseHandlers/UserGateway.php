@@ -6,6 +6,9 @@
  * Time: 10:33
  */
 
+require_once 'Connection.php';
+require_once '../model/User.php';
+
 class UserGateway {
 
     private $conn;
@@ -17,7 +20,7 @@ class UserGateway {
 
     public function insert(User $object)
     {
-        $stmt = $this->conn->prepare('INSERT INTO appUser VALUES (:login,:password,:status)');
+        $stmt = $this->conn->prepare('INSERT INTO appUser VALUES (null,:login,:password,:status)');
 
         $stmt->bindValue(':login',$object->getLogin());
         $stmt->bindValue(':password',$object->getPassword());
@@ -40,11 +43,11 @@ class UserGateway {
         $stmt->execute();
     }
 
-    public function delete(User $object)
+    public function delete($id)
     {
-        $stmt = $this->conn->prepare('DELETE * FROM appUser WHERE id=:id');
+        $stmt = $this->conn->prepare('DELETE FROM appUser WHERE id=:id');
 
-        $stmt->bindValue(':id',$object->getId());
+        $stmt->bindValue(':id',$id);
 
         $stmt->execute();
     }
@@ -58,9 +61,14 @@ class UserGateway {
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_OBJ);
-
-        $u = new User($result['login'],$result['password'],$result['status']);
-
+        if($result != false)
+        {
+            $u = new User($result->login,$result->password,$result->status);
+        }
+        else
+        {
+            $u = false;
+        }
         return $u;
     }
 

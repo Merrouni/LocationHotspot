@@ -40,4 +40,9 @@ class User
         return $this->status;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
 } 
