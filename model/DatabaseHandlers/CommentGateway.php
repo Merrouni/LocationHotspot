@@ -6,6 +6,9 @@
  * Time: 10:44
  */
 
+require_once 'Connection.php';
+require_once '../model/Comment.php';
+
 class CommentGateway {
 
     private $conn;
@@ -17,7 +20,7 @@ class CommentGateway {
 
     public function insert(Comment $object)
     {
-        $stmt = $this->conn->prepare('INSERT INTO comment VALUES (:idPlace,:content)');
+        $stmt = $this->conn->prepare('INSERT INTO comment VALUES (null,:idPlace,:content)');
 
         $stmt->bindValue(':idPlace',$object->getIdPlace());
         $stmt->bindValue(':content',$object->getContent());
@@ -38,11 +41,11 @@ class CommentGateway {
         $stmt->execute();
     }
 
-    public function delete(Comment $object)
+    public function delete($id)
     {
-        $stmt = $this->conn->prepare('DELETE * FROM comment WHERE id=:id');
+        $stmt = $this->conn->prepare('DELETE FROM comment WHERE id=:id');
 
-        $stmt->bindValue(':id',$object->getId());
+        $stmt->bindValue(':id',$id);
 
         $stmt->execute();
     }
@@ -57,7 +60,14 @@ class CommentGateway {
 
         $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-        $c = new Comment($result['idPlace'],$result['content']);
+        if($result != false)
+        {
+            $c = new Comment($result->idPlace,$result->content);
+        }
+        else
+        {
+            $c = false;
+        }
 
         return $c;
     }

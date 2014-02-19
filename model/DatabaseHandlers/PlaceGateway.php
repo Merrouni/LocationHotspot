@@ -71,7 +71,6 @@ class PlaceGateway{
 
         $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-        //$p = new Place($result['internet'],$result['coffee'],$result['plugs'],$result['openTime'],$result['closeTime'],$result['address'],$result['idUser']);
         if($result != false)
         {
             $p = new Place($result->internet,$result->coffee,$result->plugs,$result->openTime,$result->closeTime,$result->address,$result->idUser);
