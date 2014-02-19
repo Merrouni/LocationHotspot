@@ -6,7 +6,10 @@
  * Time: 17:06
  */
 
-class PlaceGateway implements Gateway{
+require_once 'Connection.php';
+require_once '../model/Place.php';
+
+class PlaceGateway{
 
     private $conn;
 
@@ -17,7 +20,7 @@ class PlaceGateway implements Gateway{
 
     public function insert(Place $object)
     {
-        $stmt = $this->conn->prepare('INSERT INTO place VALUES (:internet,:coffee,:plugs,:openTime,:closeTime,:address,:idUser)');
+        $stmt = $this->conn->prepare('INSERT INTO place VALUES (null,:internet,:coffee,:plugs,:openTime,:closeTime,:address,null,null,:idUser)');
 
         $stmt->bindValue(':internet',$object->getInternet());
         $stmt->bindValue(':coffee',$object->getCoffee());
@@ -49,11 +52,11 @@ class PlaceGateway implements Gateway{
         $stmt->execute();
     }
 
-    public function delete(Place $object)
+    public function delete($id)
     {
-        $stmt = $this->conn->prepare('DELETE * FROM place WHERE id=:id');
+        $stmt = $this->conn->prepare('DELETE FROM place WHERE id=:id');
 
-        $stmt->bindValue(':id',$object->getId());
+        $stmt->bindValue(':id',$id);
 
         $stmt->execute();
     }
@@ -68,7 +71,15 @@ class PlaceGateway implements Gateway{
 
         $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-        $p = new Place($result['internet'],$result['coffee'],$result['plugs'],$result['openTime'],$result['closeTime'],$result['address'],$result['idUser']);
+        //$p = new Place($result['internet'],$result['coffee'],$result['plugs'],$result['openTime'],$result['closeTime'],$result['address'],$result['idUser']);
+        if($result != false)
+        {
+            $p = new Place($result->internet,$result->coffee,$result->plugs,$result->openTime,$result->closeTime,$result->address,$result->idUser);
+        }
+        else
+        {
+            $p = false;
+        }
 
         return $p;
     }

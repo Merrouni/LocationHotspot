@@ -107,8 +107,14 @@ class Place
         return $this->longitude;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
     private function getCoordinates()
     {
         //TODO:calculate the coordinates from the address ans update the object in database
+        return null;
     }
 } 

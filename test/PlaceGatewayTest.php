@@ -1,62 +1,80 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: user
- * Date: 13/02/14
- * Time: 16:53
+ * User: A.Alami
+ * Date: 19/02/14
+ * Time: 16:02
  */
+
+require_once '../model/DatabaseHandlers/PlaceGateway.php';
 require_once '../model/DatabaseHandlers/UserGateway.php';
 
 class PlaceGatewayTest extends PHPUnit_Framework_TestCase {
 
     private static $id;
+    private static $idUser;
 
     public function testCreate()
     {
-        $gateway = new UserGateway(new Connection());
+        $userGateway = new UserGateway(new Connection());
         $user = new User('user','password','user_role');
+        PlaceGatewayTest::$idUser = $userGateway->insert($user);
 
-        PlaceGatewayTest::$id = $gateway->insert($user);
+        $gateway = new PlaceGateway(new Connection());
+        $place = new Place("FREE","FREE","NONE",28800,43200,"35 rue roche genes",PlaceGatewayTest::$idUser);
+        PlaceGatewayTest::$id = $gateway->insert($place);
 
         $this->assertNotEquals(PlaceGatewayTest::$id,0);
     }
 
     public function testFind()
     {
-        $gateway = new UserGateway(new Connection());
-        $user = $gateway->find(PlaceGatewayTest::$id);
+        $gateway = new PlaceGateway(new Connection());
+        $place = $gateway->find(PlaceGatewayTest::$id);
 
-        $this->assertequals($user->getLogin(),"user");
-        $this->assertequals($user->getPassword(),"password");
-        $this->assertequals($user->getStatus(),"user_role");
+        $this->assertequals($place->getInternet(),"FREE");
+        $this->assertequals($place->getCoffee(),"FREE");
+        $this->assertequals($place->getPlugs(),"NONE");
+        $this->assertequals($place->getOpenTime(),28800);
+        $this->assertequals($place->getCloseTime(),43200);
+        $this->assertequals($place->getAddress(),"35 rue roche genes");
+        $this->assertequals($place->getIdUser(),PlaceGatewayTest::$idUser);
 
     }
 
     public function testUpdate()
     {
-        $gateway = new UserGateway(new Connection());
-        $user = new User('user2','password2','user_role2');
-        $user->setId(PlaceGatewayTest::$id);
+        $gateway = new PlaceGateway(new Connection());
+        $place = new Place("FREE","NOT FREE","EXIST",28800,61200,"Rue roche genes",PlaceGatewayTest::$idUser);
+        $place->setId(PlaceGatewayTest::$id);
 
-        $gateway->update($user);
+        $gateway->update($place);
 
-        $userResult = $gateway->find(PlaceGatewayTest::$id);
+        $placeResult = $gateway->find(PlaceGatewayTest::$id);
 
-        $this->assertequals($userResult->getLogin(),"user2");
-        $this->assertequals($userResult->getPassword(),"password2");
-        $this->assertequals($userResult->getStatus(),"user_role2");
+        $this->assertequals($placeResult->getInternet(),"FREE");
+        $this->assertequals($placeResult->getCoffee(),"NOT FREE");
+        $this->assertequals($placeResult->getPlugs(),"EXIST");
+        $this->assertequals($placeResult->getOpenTime(),28800);
+        $this->assertequals($placeResult->getCloseTime(),61200);
+        $this->assertequals($placeResult->getAddress(),"Rue roche genes");
+        $this->assertequals($placeResult->getIdUser(),PlaceGatewayTest::$idUser);
 
     }
 
     public function testDelete()
     {
-        $gateway = new UserGateway(new Connection());
+        $gateway = new PlaceGateway(new Connection());
         $gateway->delete(PlaceGatewayTest::$id);
 
-        $userResult = $gateway->find(PlaceGatewayTest::$id);
+        $placeResult = $gateway->find(PlaceGatewayTest::$id);
 
-        $this->assertEquals($userResult,false);
+        $userGateway = new UserGateway(new Connection());
+        $userGateway->delete(PlaceGatewayTest::$idUser);
+
+        $this->assertEquals($placeResult,false);
 
     }
+
 }
  
