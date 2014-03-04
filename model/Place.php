@@ -114,7 +114,7 @@ class Place
 
     private function getCoordinates()
     {
-        //TODO:calculate the coordinates from the address ans update the object in database
+        //TODO:calculate the coordinates from the address and update the object in database
         return null;
     }
 } 
