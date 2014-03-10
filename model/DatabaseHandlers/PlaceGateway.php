@@ -82,4 +82,56 @@ class PlaceGateway{
 
         return $p;
     }
+
+    public function findClosestTo($myLat,$myLon,$radius)
+    {
+        //$stmt = $this->conn->prepare('SELECT * FROM place WHERE id=:id');
+        // for miles replace 6371 by 3959
+        /*$stmt = $this->conn->prepare('SELECT id, ( 6371 * acos( cos( radians(:myLat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:myLon) ) + sin( radians(:myLat) ) * sin( radians( latitude ) ) ) ) AS distance FROM markers HAVING distance < :radius ORDER BY distance LIMIT 0 , 20');
+        //SELECT id, ( 6371 * acos( cos( radians(myLat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(myLon) ) + sin( radians(myLat) ) * sin( radians( latitude ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
+
+        $stmt->bindValue('myLat',$myLat);
+        $stmt->bindValue('myLon',$myLon);
+        $stmt->bindValue('radius',$radius);
+
+        $stmt->execute();
+
+        $result = $stmt->fetch (PDO::FETCH_OBJ);*/
+
+        $items = array();
+
+        // Search the rows in the markers table
+        $query = sprintf("SELECT id, internet, coffee, plugs, openTime, closeTime, address, latitude,longitude, idUser, ( 6371 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM place HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",
+            mysql_real_escape_string($myLat),
+            mysql_real_escape_string($myLon),
+            mysql_real_escape_string($myLat),
+            mysql_real_escape_string($radius));
+        $result = mysql_query($query);
+
+        //$result = mysql_query($query);
+
+        if($result != false)
+        {
+            /*while($row = @mysql_fetch_assoc($result)){
+            $p = new Place($row->internet,$row->coffee,$row->plugs,$row->openTime,$row->closeTime,$row->address,$row->idUser);
+            $items[] = $p;
+            }*/
+            // Iterate through the rows, adding XML nodes for each
+            while ($row = @mysql_fetch_assoc($result)){
+                $p = new Place($row['internet'],$row['coffee'],$row['plugs'],$row['openTime'],$row['closeTime'],$row['address'],$row['idUser']);
+                $p->setId($row['id']);
+                $p->setLatitude($row['latitude']);
+                $p->setLongitude($row['longitude']);
+
+                $items[] = $p;
+            }
+
+        }
+        else
+        {
+            $items = false;
+        }
+
+        return $items;
+    }
 }

@@ -1,0 +1,19 @@
+{
+    "name": "ISIMA/LocationHotspot",
+    "description": "a php application to locate the internet hotspots near you",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Abdallah Alami Merrouni",
+            "email": "abdallah.merrouni@gmail.com"
+        },
+        {
+            "name": "Hicham Abdessadki"
+        }
+    ],
+    "require": {
+        "slim/slim": "2.4.2",
+        "willdurand/geocoder": "2.4.2"
+    }
+}

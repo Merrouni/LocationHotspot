@@ -112,6 +112,14 @@ class Place
         $this->id = $id;
     }
 
+    public function setLatitude($lat){
+        $this->latitude = $lat;
+    }
+
+    public function setLongitude($lon){
+        $this->longitude = $lon;
+    }
+
     private function getCoordinates()
     {
         //TODO:calculate the coordinates from the address and update the object in database
