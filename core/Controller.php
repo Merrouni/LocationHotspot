@@ -8,7 +8,7 @@
 class Controller {
 
     public $request;
-    protected $vars = array();
+    public $vars = array();
     public $layout = 'default';
     private $rendered = false;
 
@@ -19,13 +19,11 @@ class Controller {
     public function render($view){
         if($this->rendered){return false;}
         extract($this->vars);
-
         if(strpos($view,'/')===0){
             $view = ROOT.DS.'view'.$view.'.php';
         }else{
             $view = ROOT.DS.'view'.DS.$this->request->controller.DS.$view.'.php';
         }
-
         ob_start();
         require($view);
         $content_for_layout = ob_get_clean();

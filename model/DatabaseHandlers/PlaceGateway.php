@@ -13,9 +13,9 @@ class PlaceGateway{
 
     private $conn;
 
-    public function __construct(Connection $conn)
+    public function __construct()
     {
-        $this->conn = $conn->getConnection();
+        $this->conn = Connection::getConnection();
     }
 
     public function insert(Place $object)
@@ -81,6 +81,32 @@ class PlaceGateway{
         }
 
         return $p;
+    }
+
+    public function findAll()
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM place');
+
+        $stmt->execute();
+
+        $result = $stmt->fetchAll();
+
+        if($result != false)
+        {
+            foreach($result as $place){
+                $p = new Place($place['internet'],$place['coffee'],$place['plugs'],$place['openTime'],$place['closeTime'],$place['address'],$place['idUser']);
+                $p->setId($place['id']);
+                $p->setLatitude($place['latitude']);
+                $p->setLongitude($place['longitude']);
+
+                $items[] = $p;
+            }
+        }
+        else
+        {
+            $items = false;
+        }
+        return $items;
     }
 
     public function findClosestTo($myLat,$myLon,$radius)

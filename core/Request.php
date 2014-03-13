@@ -10,6 +10,11 @@ class Request {
     public $url;
 
     function __construct() {
-        $this->url = $_SERVER['PATH_INFO'];
+        if (array_key_exists('PATH_INFO', $_SERVER)){
+            $this->url = $_SERVER['PATH_INFO'];
+        }else {
+            $this->url = "/locations/view/";
+        }
+
     }
 }

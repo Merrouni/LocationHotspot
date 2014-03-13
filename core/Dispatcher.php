@@ -14,7 +14,6 @@ class Dispatcher {
         Router::parse($this->request->url,$this->request);
         //print_r($this->request);
         $controller = $this->loadController();
-        //$controller->view();
         if(!in_array($this->request->action, get_class_methods($controller))){
             $this->error('Le controlleur n esxiste pas');
         }
@@ -26,6 +25,7 @@ class Dispatcher {
         header("HTTP/1.0 404 Not Found");
         $controller = new Controller($this->request);
         $controller->set('message',$message);
+        print_r('error');
         $controller->render('/errors/404');
         die();
     }

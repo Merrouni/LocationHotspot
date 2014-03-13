@@ -20,7 +20,7 @@ class PlaceGatewayTest extends PHPUnit_Framework_TestCase {
         $user = new User('user','password','user_role');
         PlaceGatewayTest::$idUser = $userGateway->insert($user);
 
-        $gateway = new PlaceGateway(new Connection());
+        $gateway = new PlaceGateway();
         $place = new Place("FREE","FREE","NONE",28800,43200,"35 rue roche genes",PlaceGatewayTest::$idUser);
         PlaceGatewayTest::$id = $gateway->insert($place);
 
@@ -29,7 +29,7 @@ class PlaceGatewayTest extends PHPUnit_Framework_TestCase {
 
     public function testFind()
     {
-        $gateway = new PlaceGateway(new Connection());
+        $gateway = new PlaceGateway();
         $place = $gateway->find(PlaceGatewayTest::$id);
 
         $this->assertequals($place->getInternet(),"FREE");
@@ -44,7 +44,7 @@ class PlaceGatewayTest extends PHPUnit_Framework_TestCase {
 
     public function testUpdate()
     {
-        $gateway = new PlaceGateway(new Connection());
+        $gateway = new PlaceGateway();
         $place = new Place("FREE","NOT FREE","EXIST",28800,61200,"Rue roche genes",PlaceGatewayTest::$idUser);
         $place->setId(PlaceGatewayTest::$id);
 
@@ -64,7 +64,7 @@ class PlaceGatewayTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete()
     {
-        $gateway = new PlaceGateway(new Connection());
+        $gateway = new PlaceGateway();
         $gateway->delete(PlaceGatewayTest::$id);
 
         $placeResult = $gateway->find(PlaceGatewayTest::$id);

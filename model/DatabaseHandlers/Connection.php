@@ -14,9 +14,9 @@ define('DATABASE','location_hotspot');
 
 class Connection {
 
-    public function getConnection()
+    static function getConnection()
     {
-        $conn = new PDO(PROVIDER.":host=".HOST.";dbname=".DATABASE,USERNAME,PASSWORD);
+        $conn = new PDO(PROVIDER.":host=".HOST.";dbname=".DATABASE,USERNAME,PASSWORD,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 
         if(!$conn)
         {

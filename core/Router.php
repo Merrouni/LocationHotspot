@@ -7,9 +7,12 @@
  */
 class Router {
 
-    //parse an URL
-    //@param url to parse
-    //@return table with all parameters
+    /**
+     * parse an URL
+     * @param $url ,to parse
+     * @param $request , the received request
+     * @return true
+     */
     static function parse($url, $request){
         $url = trim($url,'/');
         $params = explode('/',$url);
