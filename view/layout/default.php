@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../root/css/bootstrap.css" type="text/css"/>
     <style>
         body {
-            padding-top: 50px; /* 60px to make the container go all the way to the bottom of the topbar */
+            padding-top: 50px; /* 50px to make the container go all the way to the bottom of the topbar */
         }
     </style>
     <link href="../../root/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
@@ -22,7 +22,7 @@
                         <span class="icon-bar"></span>
                     </a>
                     <a class="brand" href="#">Internet Hotspots</a>
-                    <div class="nav-collapse">
+                    <!--<div class="nav-collapse">
                         <ul class="nav">
                             <li class="active"><a href="#">Home</a></li>
                             <li><a href="#about">About</a></li>

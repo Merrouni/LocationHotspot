@@ -26,7 +26,6 @@ $title_for_layout = 'Internet Hotspots';
 
 <div id="map" onClick="document.getElementById('lat').value=getCurrentLat();document.getElementById('lng').value=getCurrentLng();" >
     <?php
-
     $gmap = new GoogleMapAPI();
     $gmap->setDivId('maps');
     $gmap->setDirectionDivId('route');
@@ -40,13 +39,13 @@ $title_for_layout = 'Internet Hotspots';
     //$gmap->setLang('fr');
     //$gmap->setDefaultHideMarker(false);
 
+    //$test = 6371 * acos( cos( deg2rad(:myLat) ) * cos( deg2rad( latitude ) ) * cos( deg2rad( longitude ) - deg2rad(:myLon) ) + sin( deg2rad(:myLat) ) * sin( deg2rad( latitude ) ) );
+
     // insert the hotspots in the map
     foreach($places as $key => $place){
         $gmap->addMarkerByAddress($place->getAddress(),$key,$key);
     }
     //$gmap->addMarkerByAddress('35 Rue de Roche Gènes, Aubière, France','hotspot 19','Hotspot 19');
-    //$gmap->addMarkerByAddress('Nantes, France','hotspot 20','Hotspot 20');
-    //$gmap->addMarkerByAddress($place->getAddress(),'hotspot 20','Hotspot 20');
 
     $gmap->generate();
     echo $gmap->getGoogleMap();

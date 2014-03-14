@@ -8,6 +8,7 @@
 
 require_once 'Connection.php';
 require_once '../model/Place.php';
+//require_once '../maps/GoogleMapAPIv3.php';
 
 class PlaceGateway{
 
@@ -20,7 +21,10 @@ class PlaceGateway{
 
     public function insert(Place $object)
     {
-        $stmt = $this->conn->prepare('INSERT INTO place VALUES (null,:internet,:coffee,:plugs,:openTime,:closeTime,:address,null,null,:idUser)');
+        $gmap = new GoogleMapAPI();
+        $point = $gmap->geocoding($object->getAddress());
+
+        $stmt = $this->conn->prepare('INSERT INTO place VALUES (null,:internet,:coffee,:plugs,:openTime,:closeTime,:address,:latitude,:longitude,:idUser)');
 
         $stmt->bindValue(':internet',$object->getInternet());
         $stmt->bindValue(':coffee',$object->getCoffee());
@@ -28,6 +32,8 @@ class PlaceGateway{
         $stmt->bindValue(':openTime',$object->getOpenTime());
         $stmt->bindValue(':closeTime',$object->getCloseTime());
         $stmt->bindValue(':address',$object->getAddress());
+        $stmt->bindValue(':latitude',$point[2]);
+        $stmt->bindValue(':longitude',$point[3]);
         $stmt->bindValue(':idUser',$object->getIdUser());
 
         $stmt->execute();
@@ -74,6 +80,9 @@ class PlaceGateway{
         if($result != false)
         {
             $p = new Place($result->internet,$result->coffee,$result->plugs,$result->openTime,$result->closeTime,$result->address,$result->idUser);
+            $p->setId($result->id);
+            $p->setLatitude($result->latitude);
+            $p->setLongitude($result->longitude);
         }
         else
         {
@@ -111,10 +120,11 @@ class PlaceGateway{
 
     public function findClosestTo($myLat,$myLon,$radius)
     {
-        //$stmt = $this->conn->prepare('SELECT * FROM place WHERE id=:id');
+        $items = array();
+
         // for miles replace 6371 by 3959
-        /*$stmt = $this->conn->prepare('SELECT id, ( 6371 * acos( cos( radians(:myLat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:myLon) ) + sin( radians(:myLat) ) * sin( radians( latitude ) ) ) ) AS distance FROM markers HAVING distance < :radius ORDER BY distance LIMIT 0 , 20');
         //SELECT id, ( 6371 * acos( cos( radians(myLat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(myLon) ) + sin( radians(myLat) ) * sin( radians( latitude ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
+        $stmt = $this->conn->prepare('SELECT id,internet,coffee,plugs,openTime,closeTime,address,latitude,longitude,idUser, ( 6371 * acos( cos( radians(:myLat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:myLon) ) + sin( radians(:myLat) ) * sin( radians( latitude ) ) ) ) AS distance FROM place HAVING distance < :radius ORDER BY distance LIMIT 0 , 20');
 
         $stmt->bindValue('myLat',$myLat);
         $stmt->bindValue('myLon',$myLon);
@@ -122,42 +132,23 @@ class PlaceGateway{
 
         $stmt->execute();
 
-        $result = $stmt->fetch (PDO::FETCH_OBJ);*/
-
-        $items = array();
-
-        // Search the rows in the markers table
-        $query = sprintf("SELECT id, internet, coffee, plugs, openTime, closeTime, address, latitude,longitude, idUser, ( 6371 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM place HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",
-            mysql_real_escape_string($myLat),
-            mysql_real_escape_string($myLon),
-            mysql_real_escape_string($myLat),
-            mysql_real_escape_string($radius));
-        $result = mysql_query($query);
-
-        //$result = mysql_query($query);
+        $result = $stmt->fetchAll();
 
         if($result != false)
         {
-            /*while($row = @mysql_fetch_assoc($result)){
-            $p = new Place($row->internet,$row->coffee,$row->plugs,$row->openTime,$row->closeTime,$row->address,$row->idUser);
-            $items[] = $p;
-            }*/
-            // Iterate through the rows, adding XML nodes for each
-            while ($row = @mysql_fetch_assoc($result)){
-                $p = new Place($row['internet'],$row['coffee'],$row['plugs'],$row['openTime'],$row['closeTime'],$row['address'],$row['idUser']);
-                $p->setId($row['id']);
-                $p->setLatitude($row['latitude']);
-                $p->setLongitude($row['longitude']);
+            foreach($result as $place){
+                $p = new Place($place['internet'],$place['coffee'],$place['plugs'],$place['openTime'],$place['closeTime'],$place['address'],$place['idUser']);
+                $p->setId($place['id']);
+                $p->setLatitude($place['latitude']);
+                $p->setLongitude($place['longitude']);
 
                 $items[] = $p;
             }
-
         }
         else
         {
             $items = false;
         }
-
         return $items;
     }
 }
